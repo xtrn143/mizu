@@ -1,4 +1,4 @@
-module github.com/sedyh/mizu
+module github.com/xtrn143/mizu
 
 go 1.20
 
@@ -24,3 +24,5 @@ require (
 	gopkg.in/tomb.v1 v1.0.0-20141024135613-dd632973f1e7 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
 )
+
+replace github.com/sedyh/mizu => github.com/xtrn143/mizu v1.0.7
