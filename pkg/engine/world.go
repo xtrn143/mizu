@@ -19,6 +19,7 @@ type World interface {
 	AddComponents(components ...interface{}) // Registers the used components of your object properties.
 	AddSystems(systems ...interface{})       // Adds a system that will work with each entity by its components.
 	AddEntities(entities ...interface{})     // Adds an entities that will represent your objects.
+	AddEntity(entity interface{}) int        // Adds a single entity and return the entity id
 	RemoveEntity(entity Entity)              // Removes an entity.
 	GetEntity(id int) (e Entity, ok bool)    // Returns an entity by id and a search status.
 	Components() int                         // Get current amount of registered components.
@@ -130,6 +131,23 @@ func (w *world) AddEntities(entities ...interface{}) {
 		components := structFieldTypes(probableStruct)
 		w.entities = append(w.entities, makeEntity(w, components...))
 	}
+}
+
+func (w *world) AddEntity(entity interface{}) int {
+	probablePointer := reflect.ValueOf(entity)
+	if probablePointer.Kind() != reflect.Ptr {
+		panic(fmt.Sprintf("entity %s should be a pointer", typeName(probablePointer.Type())))
+	}
+	probableStruct := probablePointer.Elem()
+	if probableStruct.Kind() != reflect.Struct {
+		panic(fmt.Sprintf("entity %s under pointer should be a struct", typeName(probableStruct.Type())))
+	}
+	components := structFieldTypes(probableStruct)
+
+	e := makeEntity(w, components...)
+	w.entities = append(w.entities, e)
+
+	return e.id
 }
 
 // AddSystems adds systems that will work with each entity by its components
